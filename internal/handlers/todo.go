@@ -31,7 +31,7 @@ func newTodoHandler(app core.App) TodoHandler {
 }
 
 func (h TodoHandler) ListHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := h.NewTemplate("todo/list.tpl")
+	tmpl, err := h.NewTemplate("todo/view.tpl", "todo/list.tpl")
 	if err != nil {
 		response500(w, fmt.Errorf("h.NewTemplate: %w", err))
 		return
@@ -55,7 +55,7 @@ func (h TodoHandler) CreateHandler(w http.ResponseWriter, r *http.Request) {
 		Content: r.Form.Get("content"),
 	})
 
-	tmpl, err := h.NewTemplate("todo/list.tpl")
+	tmpl, err := h.NewTemplate("todo/view.tpl", "todo/list.tpl")
 	if err != nil {
 		response500(w, fmt.Errorf("h.NewTemplate: %w", err))
 		return

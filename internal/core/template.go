@@ -3,7 +3,6 @@ package core
 import (
 	"html/template"
 	"path"
-	"path/filepath"
 )
 
 type Template struct {
@@ -22,12 +21,19 @@ func (h *Template) AddFuncMap(funcMap template.FuncMap) *Template {
 	return h
 }
 
-func (h Template) NewTemplate(tplPath string) (*template.Template, error) {
-	tplName := filepath.Base(tplPath)
-	return template.New(tplName).Funcs(h.FuncMap).ParseFiles(h.resolveTemplatePath(tplPath))
+func (h Template) NewTemplate(tplPaths ...string) (*template.Template, error) {
+	return template.ParseFiles(h.resolveTemplatePaths(tplPaths)...)
 
 }
 
-func (h Template) resolveTemplatePath(tplName string) string {
-	return path.Clean(h.BaseTemplateDir) + "/" + tplName
+func (h Template) resolveTemplatePath(tplPath string) string {
+	return path.Clean(h.BaseTemplateDir) + "/" + tplPath
+}
+
+func (h Template) resolveTemplatePaths(tplPaths []string) []string {
+	paths := []string{}
+	for _, path := range tplPaths {
+		paths = append(paths, h.resolveTemplatePath(path))
+	}
+	return paths
 }
