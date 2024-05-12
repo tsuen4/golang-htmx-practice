@@ -12,31 +12,33 @@
 </head>
 <body>
     <h1>Todo List</h1>
-    <form>
+    <form
+        hx-post="/todo"
+        hx-target="#list"
+        hx-swap="innerHTML"
+        hx-on::after-request="this.reset()"
+        hx-trigger="submit"
+    >
         <input
             type="text"
             name="content"
         />
-        <button
-            hx-post="/todo"
-            hx-target="#list"
-            hx-swap="innerHTML"
-        >
-            Add
-        </button>
+        <button>Add</button>
     </form>
     <div id="list">
         {{ block "list" . }}
         <div>items: {{ . | len }}</div>
         <ul>
             {{ range . }}
-            <li><input
+            <li>
+                <input
                     type="checkbox"
                     name="{{ .Id }}-done"
                     id="{{ .Id }}"
                     {{ if .Done }}checked{{ end }}
                     hx-put="/todo/{{ .Id }}/done"
-                >{{ .Id }}: {{ .Content }}</li>
+                >{{ .Id }}: {{ .Content }}
+            </li>
             {{ end }}
         </ul>
         {{ end }}
