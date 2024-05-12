@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"fmt"
 	"htmx-practice/internal/core"
 	"htmx-practice/internal/entities"
@@ -53,8 +54,13 @@ func (h TodoHandler) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("Hx-Request") == "true" {
 		target = "list"
 	}
-	if err := h.Tmpl.ExecuteTemplate(w, target, globalTodos); err != nil {
+
+	resBuf := bytes.NewBuffer(nil)
+	if err := h.Tmpl.ExecuteTemplate(resBuf, target, globalTodos); err != nil {
 		response500(w, fmt.Errorf("tmpl.ExecuteTemplate: %w", err))
 		return
 	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Write(resBuf.Bytes())
 }
