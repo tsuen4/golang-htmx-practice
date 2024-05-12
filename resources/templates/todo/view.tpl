@@ -20,7 +20,13 @@
         <div>items: {{ . | len }}</div>
         <ul>
             {{ range . }}
-            <li><input type="checkbox" name="done[]" id="{{ .Id }}" disabled {{ if .Done }}checked{{ end }}>{{ .Id }}: {{ .Content }}</li>
+            <li><input 
+                    type="checkbox"
+                    name="{{ .Id }}-done" 
+                    id="{{ .Id }}" 
+                    {{ if .Done }}checked{{ end }}
+                    hx-put="/todo/{{ .Id }}/done"
+                >{{ .Id }}: {{ .Content }}</li>
             {{ end }}
         </ul>
         {{ end }}

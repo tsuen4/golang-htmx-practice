@@ -6,6 +6,7 @@ import (
 	"htmx-practice/internal/core"
 	"htmx-practice/internal/entities"
 	"net/http"
+	"strconv"
 )
 
 var globalTodos = []entities.Todo{
@@ -63,4 +64,42 @@ func (h TodoHandler) CreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	w.Write(resBuf.Bytes())
+}
+
+func (h TodoHandler) DoneHandler(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		response500(w, fmt.Errorf("r.ParseForm: %w", err))
+		return
+	}
+
+	idStr := r.PathValue("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		response500(w, fmt.Errorf("strconv.Atoi: %w", err))
+		return
+	}
+
+	doneStr := r.Form.Get(idStr + "-done")
+	done := false
+	if doneStr == "on" {
+		done = true
+	}
+
+	// update
+	for i, t := range globalTodos {
+		if t.Id == id {
+			globalTodos[i].Done = done
+			break
+		}
+	}
+
+	target := "view"
+	if r.Header.Get("Hx-Request") == "true" {
+		target = "list"
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, target, globalTodos); err != nil {
+		response500(w, fmt.Errorf("tmpl.ExecuteTemplate: %w", err))
+		return
+	}
 }
