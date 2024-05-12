@@ -3,15 +3,25 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
     <title>Todo</title>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </head>
 <body>
     <h1>Todo List</h1>
     <form>
-        <input type="text" name="content" />
-        <button hx-post="/todo" hx-target="#list" hx-swap="innerHTML">
+        <input
+            type="text"
+            name="content"
+        />
+        <button
+            hx-post="/todo"
+            hx-target="#list"
+            hx-swap="innerHTML"
+        >
             Add
         </button>
     </form>
@@ -20,10 +30,10 @@
         <div>items: {{ . | len }}</div>
         <ul>
             {{ range . }}
-            <li><input 
+            <li><input
                     type="checkbox"
-                    name="{{ .Id }}-done" 
-                    id="{{ .Id }}" 
+                    name="{{ .Id }}-done"
+                    id="{{ .Id }}"
                     {{ if .Done }}checked{{ end }}
                     hx-put="/todo/{{ .Id }}/done"
                 >{{ .Id }}: {{ .Content }}</li>
