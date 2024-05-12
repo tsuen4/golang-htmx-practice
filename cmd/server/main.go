@@ -25,6 +25,7 @@ func main() {
 	})
 
 	mux := http.NewServeMux()
+	mux.Handle("GET /", http.RedirectHandler("/todos", http.StatusMovedPermanently))
 	mux.Handle("GET /static/", disableListFile(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir)))))
 	mux.HandleFunc("GET /todos", core.Logger(h.TodoHandler.ListHandler))
 	mux.HandleFunc("POST /todo", core.Logger(h.TodoHandler.CreateHandler))
