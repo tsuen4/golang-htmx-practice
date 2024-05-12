@@ -31,14 +31,8 @@ func newTodoHandler(app core.App) TodoHandler {
 }
 
 func (h TodoHandler) ListHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := h.NewTemplate("todo/view.tpl", "todo/list.tpl")
-	if err != nil {
-		response500(w, fmt.Errorf("h.NewTemplate: %w", err))
-		return
-	}
-
-	if err := tmpl.Execute(w, globalTodos); err != nil {
-		response500(w, fmt.Errorf("tmpl.Execute: %w", err))
+	if err := h.Tmpl.ExecuteTemplate(w, "view", globalTodos); err != nil {
+		response500(w, fmt.Errorf("tmpl.ExecuteTemplate: %w", err))
 		return
 	}
 }
@@ -55,14 +49,12 @@ func (h TodoHandler) CreateHandler(w http.ResponseWriter, r *http.Request) {
 		Content: r.Form.Get("content"),
 	})
 
-	tmpl, err := h.NewTemplate("todo/view.tpl", "todo/list.tpl")
-	if err != nil {
-		response500(w, fmt.Errorf("h.NewTemplate: %w", err))
-		return
+	target := "view"
+	if r.Header.Get("Hx-Request") == "true" {
+		target = "list"
 	}
-
-	if err := tmpl.Execute(w, globalTodos); err != nil {
-		response500(w, fmt.Errorf("tmpl.Execute: %w", err))
+	if err := h.Tmpl.ExecuteTemplate(w, target, globalTodos); err != nil {
+		response500(w, fmt.Errorf("tmpl.ExecuteTemplate: %w", err))
 		return
 	}
 }

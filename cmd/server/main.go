@@ -11,11 +11,14 @@ import (
 const baseTemplateDir = "./resources/templates"
 
 func main() {
-	app := core.App{
-		Template: *core.NewTemplateHandler(baseTemplateDir),
+	template, err := core.NewTemplate(baseTemplateDir)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "core.NewTemplate: %v", err)
+		os.Exit(1)
 	}
-
-	h := handlers.New(app)
+	h := handlers.New(core.App{
+		Tmpl: *template,
+	})
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /todos", core.Logger(h.TodoHandler.ListHandler))

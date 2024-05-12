@@ -1,5 +1,7 @@
 package core
 
+import "html/template"
+
 type App struct {
-	Template
+	Tmpl template.Template
 }
