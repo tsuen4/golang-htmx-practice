@@ -6,9 +6,13 @@ import (
 	"htmx-practice/internal/handlers"
 	"net/http"
 	"os"
+	"strings"
 )
 
-const baseTemplateDir = "./resources/templates"
+const (
+	baseTemplateDir = "./resources/templates"
+	staticDir       = "./static"
+)
 
 func main() {
 	template, err := core.NewTemplate(baseTemplateDir)
@@ -21,6 +25,7 @@ func main() {
 	})
 
 	mux := http.NewServeMux()
+	mux.Handle("GET /static/", disableListFile(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir)))))
 	mux.HandleFunc("GET /todos", core.Logger(h.TodoHandler.ListHandler))
 	mux.HandleFunc("POST /todo", core.Logger(h.TodoHandler.CreateHandler))
 	mux.HandleFunc("PUT /todo/{id}/done", core.Logger(h.TodoHandler.DoneHandler))
@@ -29,4 +34,14 @@ func main() {
 		fmt.Fprintf(os.Stderr, "http.ListenAndServe: %v", err)
 		os.Exit(1)
 	}
+}
+
+func disableListFile(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, "/") {
+			http.NotFound(w, r)
+			return
+		}
+		h.ServeHTTP(w, r)
+	})
 }

@@ -8,7 +8,7 @@
         content="width=device-width, initial-scale=1.0"
     >
     <title>Todo</title>
-    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="/static/js/htmx.min.js"></script>
 </head>
 <body>
     <h1>Todo List</h1>
