@@ -31,6 +31,11 @@
         </ul>
         {{ end }}
     </div>
+    <script>
+        document.addEventListener('htmx:responseError', (e) => {
+            alert(e.detail.xhr.statusText)
+        })
+    </script>
 </body>
 </html>
 {{ end }}
